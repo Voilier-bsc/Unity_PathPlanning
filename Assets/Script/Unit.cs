@@ -27,7 +27,6 @@ public class Unit : MonoBehaviour {
     }
 
 	void Start() {
-        
 		GlobalPathRequestManager.RequestPath(transform.position,target.position, OnPathFound);
 	}
 
@@ -50,6 +49,7 @@ public class Unit : MonoBehaviour {
 				}
 				currentWaypoint = path[targetIndex];
 			}
+			// local path planning 진행
 
 			transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
 			yield return null;
@@ -74,6 +74,3 @@ public class Unit : MonoBehaviour {
 	}
 }
 
-// public class RRTNode{
-
-// }
