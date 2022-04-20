@@ -2,228 +2,345 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class LocalPathPlanning : MonoBehaviour
 {
-    public int max_iter; //500
-    public int goal_sample_rate; //5
-    public int min_rand;
-    public int max_rand;
-    public float expand_dis; // 3.0
-    public float path_resolution; //0.5
-    public float connect_circle_dist; //50.0
-    public LayerMask unwalkableMask;
+    // public int max_iter; //500
+    // public int goal_sample_rate; //5
+    // public int min_rand;
+    // public int max_rand;
+    // public float expand_dis; // 3.0
+    // public float path_resolution; //0.5
+    // public float connect_circle_dist; //50.0
+    // public LayerMask unwalkableMask;
+    // List<RRTNode> node_list = new List<RRTNode>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    // // Start is called before the first frame update
+    // void Start()
+    // {
         
-    }
+    // }
 
-    // Update is called once per frame
-    void Update()
-    {
+    // // Update is called once per frame
+    // void Update()
+    // {
         
-    }
+    // }
 
-    void localplanning(RRTNode _startpos, RRTNode _goalpos){
-        List<RRTNode> node_list = new List<RRTNode>();
-        node_list.Add(_startpos);
-        RRTNode rnd_node;
-        int nearest_ind;
-        RRTNode nearest_node;
-        
-
-        Vector3[] local_path;
+    // public Vector3[] localplanning(Vector3 _startpos, Vector3 _goalpos){
+    //     node_list.Clear();
+    //     RRTNode start_node = new RRTNode(_startpos.x, _startpos.z);
+    //     RRTNode end_node = new RRTNode(_goalpos.x, _goalpos.z);
 
 
+    //     node_list.Add(start_node);
 
 
-        for(int i = 0; i < max_iter; i++){
-            rnd_node = get_random_node(_goalpos);
-            nearest_ind = get_nearest_node_index(node_list, rnd_node);
-            RRTNode New_Node = steer(node_list[nearest_ind], rnd_node, expand_dis);
-            nearest_node = node_list[nearest_ind];
+    //     RRTNode rnd_node;
+    //     int nearest_ind;
+    //     RRTNode nearest_node;
+    //     int last_index;
+    //     Vector3[] local_path = new Vector3[0];
 
-            New_Node.cost = nearest_node.cost + (Mathf.Pow(New_Node.x-nearest_node.x,2)+(Mathf.Pow(New_Node.y-nearest_node.y,2)));
+    //     for(int i = 0; i < max_iter; i++){
+    //         rnd_node = get_random_node(end_node);
+    //         nearest_ind = get_nearest_node_index(rnd_node);
+    //         RRTNode New_Node = steer(node_list[nearest_ind], rnd_node, expand_dis);
+    //         nearest_node = node_list[nearest_ind];
+
+    //         New_Node.cost = nearest_node.cost + (Mathf.Pow(New_Node.x-nearest_node.x,2)+(Mathf.Pow(New_Node.y-nearest_node.y,2)));
             
-            if (check_collision(New_Node)){
-                List<int> near_inds = find_near_nodes(node_list, New_Node);
-                RRTNode node_with_updated_parent = choose_parent(node_list, New_Node, near_inds);
-                if(node_with_updated_parent != null){
-                    //rewire
-                    node_list.Add(node_with_updated_parent);
-                }
-                else{
-                    node_list.Add(New_Node);
-                }
+    //         if (check_collision(New_Node)){
+    //             List<int> near_inds = find_near_nodes(New_Node);
+    //             RRTNode node_with_updated_parent = choose_parent(New_Node, near_inds);
+    //             if(node_with_updated_parent != null){
+    //                 rewire(node_with_updated_parent, near_inds);
+    //                 node_list.Add(node_with_updated_parent);
+    //             }
+    //             else{
+    //                 node_list.Add(New_Node);
+    //             }
+    //         }
 
-            }
+    //         if(New_Node != null){
+    //             last_index = search_best_goal_node(end_node);
+    //             if(last_index != -1){
+    //                 local_path = generate_final_course(last_index, end_node);
+    //                 return local_path;
+    //             }
+    //         }
+    //     }
 
-        }
-    }
+    //     Debug.Log("reached max iteration");
 
-    public void rewire(){
+    //     last_index = search_best_goal_node(end_node);
+    //         if(last_index != -1){
+    //             local_path = generate_final_course(last_index, end_node);
+    //             return local_path;
+    //         }
 
-    }
+    //     return null;
+    // }
 
-    RRTNode choose_parent(List<RRTNode> _nodeList, RRTNode new_node, List<int> near_inds){
-        if(near_inds.Count==0){
-            return null;
-        }
+    // Vector3[] generate_final_course(int goal_ind, RRTNode goal_node){
+    //     List<Vector3> path = new List<Vector3>();
+    //     path.Add(new Vector3(goal_node.x, 0.5f, goal_node.y));
 
-        List<float> costs = new List<float>();
+    //     RRTNode current_node = node_list[goal_ind];
 
-        foreach(int i in near_inds){
-            RRTNode near_node = _nodeList[i];
-            RRTNode t_node = steer(near_node, new_node, expand_dis);
-            if ((t_node!=null) && (check_collision(t_node))){
-                costs.Add(calc_new_cost(near_node, new_node));
-            } 
-            else{
-                costs.Add(float.MaxValue);
-            }
-        }
+    //     while (current_node.parent != null)
+    //     {
+    //         path.Add(new Vector3(current_node.x, 0.5f, current_node.y));
+    //         current_node = current_node.parent;
+    //     }
 
-        float min_cost = costs.Min();
+    //     Vector3[] path_arr = path.ToArray();
+    //     Array.Reverse(path_arr);
+    //     return path_arr;
+    // }
 
-        if(min_cost == float.MaxValue){
-            Debug.Log("There is no good path.");
-            return null;
-        }
+    // int search_best_goal_node(RRTNode _goalpos){
+    //     List<float> dist_to_goal_list = new List<float>();
+    //     List<int> goal_inds = new List<int>();
+    //     List<int> safe_goal_inds = new List<int>();
+    //     List<float> costs = new List<float>();
 
-        int min_ind = near_inds[costs.IndexOf(min_cost)];
-        new_node = steer(_nodeList[min_ind], new_node, expand_dis);
-        new_node.cost = min_cost;
+    //     foreach(RRTNode _node in node_list){
+    //         dist_to_goal_list.Add(calc_dist_to_goal(_node.x, _node.y, _goalpos));
+    //     }
 
-        return new_node;
-    }
+    //     foreach(float dist in dist_to_goal_list){
+    //         if(dist <= expand_dis){
+    //             goal_inds.Add(dist_to_goal_list.IndexOf(dist));
+    //         }
+    //     }
 
-    float calc_new_cost(RRTNode from_node, RRTNode to_node){
-        float distance;
-        float angle;
+    //     foreach(int goal_ind in goal_inds){
+    //         RRTNode t_node = steer(node_list[goal_ind], _goalpos, expand_dis);
+    //         if(check_collision(t_node)){
+    //             safe_goal_inds.Add(goal_ind);
+    //         }
+    //     }
 
-        (distance, angle) = calc_distance_and_angle(from_node, to_node);
-        return distance + from_node.cost;
-    }
-
-    bool check_collision(RRTNode node){
-
-        if(node == null){
-            return false;
-        }
-
-        Vector3 start_pos = new Vector3(node.x, 0, node.y);
-        if(Physics.CheckSphere(start_pos, 0.1f, unwalkableMask)){
-            return false;
-        }
-
-        return true;
-    }
-
-    RRTNode steer(RRTNode from_node, RRTNode to_node, float extend_length){
-        RRTNode newnode = new RRTNode(from_node.x, from_node.y);
-        float distance;
-        float angle;
-
-        (distance, angle) = calc_distance_and_angle(from_node,to_node);
-        newnode.path_x.Add(newnode.x);
-        newnode.path_y.Add(newnode.y);
+    //     if(safe_goal_inds.Count == 0){
+    //         return -1;
+    //     }
         
-        if (extend_length > distance){
-            extend_length  = distance;
-        }
+    //     foreach(int idx in safe_goal_inds){
+    //         costs.Add(node_list[idx].cost);
+    //     }
 
-        int n_expand = (int)Mathf.Floor(extend_length/path_resolution);
+    //     float min_cost = costs.Min();
 
-        for(int i = 0; i < n_expand; i++){
-            newnode.x += path_resolution * Mathf.Cos(angle);
-            newnode.y += path_resolution * Mathf.Sin(angle);
-            newnode.path_x.Add(newnode.x);
-            newnode.path_y.Add(newnode.y);
-        }
-
-        (distance, angle) = calc_distance_and_angle(newnode, to_node);
+    //     foreach(int idx in safe_goal_inds){
+    //         if(node_list[idx].cost == min_cost){
+    //             return idx;
+    //         }
+    //     }
         
-        if(distance <= path_resolution){
-            newnode.path_x.Add(to_node.x);
-            newnode.path_y.Add(to_node.y);
-            newnode.x = to_node.x;
-            newnode.y = to_node.y;
-        }
+    //     return -1;
+    // }
 
-        newnode.parent = from_node;
+    // float calc_dist_to_goal(float x, float y, RRTNode _goalpos){
+    //     float dx = x - _goalpos.x;
+    //     float dy = y - _goalpos.y;
 
-        return newnode;
-    }
+    //     return Mathf.Sqrt(Mathf.Pow(dx,2) + Mathf.Pow(dy,2));
+    // }
 
-    (float, float) calc_distance_and_angle(RRTNode from_node, RRTNode to_node){
-        float dx = from_node.x - to_node.x;
-        float dy = from_node.y - to_node.y;
 
-        float distance = Mathf.Sqrt(Mathf.Pow(dx,2) + Mathf.Pow(dy,2));
-        float angle = Mathf.Atan2(dy,dx);
 
-        return (distance, angle);
-    }
+    // public void rewire(RRTNode new_node, List<int> near_inds){
+    //     foreach(int ind in near_inds){
+    //         RRTNode near_node = node_list[ind];
+    //         RRTNode edge_node = steer(new_node, near_node,expand_dis);
+    //         if(edge_node == null){
+    //             continue;
+    //         }
+    //         edge_node.cost = calc_new_cost(new_node,near_node);
 
-    int get_nearest_node_index(List<RRTNode> _nodeList, RRTNode randomNode){
-        List<float> dist_arr = new List<float>();
-        int min_ind;
-        foreach(RRTNode _node in _nodeList){
-            dist_arr.Add((Mathf.Pow(_node.x-randomNode.x,2)+(Mathf.Pow(_node.y-randomNode.y,2))));
-        }
-        min_ind = dist_arr.IndexOf(dist_arr.Min());
-        return min_ind;
-    }
+    //         bool no_collision = check_collision(edge_node);
+    //         bool improved_cost = near_node.cost > edge_node.cost;
 
-    List<int> find_near_nodes(List<RRTNode> _nodeList, RRTNode new_node){
-        List<float> dist_arr = new List<float>();
-        List<int> near_inds = new List<int>();
-        int num_node = _nodeList.Count + 1;
-        float r = connect_circle_dist * Mathf.Sqrt((Mathf.Log(num_node) / num_node));
+    //         if(no_collision && improved_cost){
+    //             near_node.x = edge_node.x;
+    //             near_node.y = edge_node.y;
+    //             near_node.cost = edge_node.cost;
+    //             near_node.path_x = edge_node.path_x;
+    //             near_node.path_y = edge_node.path_y;
+    //             near_node.parent = edge_node.parent;
+    //             propagate_cost_to_leaves(new_node);
+    //         }
+    //     }
+    // }
 
-        r = Mathf.Min(r, expand_dis);
+    // public void propagate_cost_to_leaves(RRTNode parent_node){
+    //     foreach(RRTNode node in node_list){
+    //         if (node.parent == parent_node){
+    //             node.cost = calc_new_cost(parent_node, node);
+    //             propagate_cost_to_leaves(node);
+    //         }
+    //     }
+    // }
+
+    // RRTNode choose_parent(RRTNode new_node, List<int> near_inds){
+    //     if(near_inds.Count==0){
+    //         return null;
+    //     }
+
+    //     List<float> costs = new List<float>();
+
+    //     foreach(int i in near_inds){
+    //         RRTNode near_node = node_list[i];
+    //         RRTNode t_node = steer(near_node, new_node, expand_dis);
+    //         if ((t_node!=null) && (check_collision(t_node))){
+    //             costs.Add(calc_new_cost(near_node, new_node));
+    //         } 
+    //         else{
+    //             costs.Add(float.MaxValue);
+    //         }
+    //     }
+
+    //     float min_cost = costs.Min();
+
+    //     if(min_cost == float.MaxValue){
+    //         Debug.Log("There is no good path.");
+    //         return null;
+    //     }
+
+    //     int min_ind = near_inds[costs.IndexOf(min_cost)];
+    //     new_node = steer(node_list[min_ind], new_node, expand_dis);
+    //     new_node.cost = min_cost;
+
+    //     return new_node;
+    // }
+
+    // float calc_new_cost(RRTNode from_node, RRTNode to_node){
+    //     float distance;
+    //     float angle;
+
+    //     (distance, angle) = calc_distance_and_angle(from_node, to_node);
+    //     return distance + from_node.cost;
+    // }
+
+    // bool check_collision(RRTNode node){
+
+    //     if(node == null){
+    //         return false;
+    //     }
+
+    //     Vector3 start_pos = new Vector3(node.x, 0, node.y);
+    //     if(Physics.CheckSphere(start_pos, 0.1f, unwalkableMask)){
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
+    // RRTNode steer(RRTNode from_node, RRTNode to_node, float extend_length){
+    //     RRTNode newnode = new RRTNode(from_node.x, from_node.y);
+    //     float distance;
+    //     float angle;
+
+    //     (distance, angle) = calc_distance_and_angle(from_node,to_node);
+    //     newnode.path_x.Add(newnode.x);
+    //     newnode.path_y.Add(newnode.y);
         
-        foreach(RRTNode _node in _nodeList){
-            dist_arr.Add((Mathf.Pow(_node.x-new_node.x,2)+(Mathf.Pow(_node.y-new_node.y,2))));
-        }
+    //     if (extend_length > distance){
+    //         extend_length  = distance;
+    //     }
 
-        foreach(float dist in dist_arr){
-            if(dist <= Mathf.Pow(r,2)){
-                near_inds.Add(dist_arr.IndexOf(dist));
-            }
-        }
-        return near_inds;
-    }
+    //     int n_expand = (int)Mathf.Floor(extend_length/path_resolution);
 
+    //     for(int i = 0; i < n_expand; i++){
+    //         newnode.x += path_resolution * Mathf.Cos(angle);
+    //         newnode.y += path_resolution * Mathf.Sin(angle);
+    //         newnode.path_x.Add(newnode.x);
+    //         newnode.path_y.Add(newnode.y);
+    //     }
 
-    RRTNode get_random_node(RRTNode _goalpos){
-        RRTNode randomNode;
-        if(Random.Range(0,100) > goal_sample_rate){
-            randomNode = new RRTNode(Random.Range(min_rand,max_rand), Random.Range(min_rand,max_rand));
-        }
-        else{
-            randomNode = new RRTNode(_goalpos.x, _goalpos.y);
-        }
+    //     (distance, angle) = calc_distance_and_angle(newnode, to_node);
         
-        return randomNode;
-    }
+    //     if(distance <= path_resolution){
+    //         newnode.path_x.Add(to_node.x);
+    //         newnode.path_y.Add(to_node.y);
+    //         newnode.x = to_node.x;
+    //         newnode.y = to_node.y;
+    //     }
+
+    //     newnode.parent = from_node;
+
+    //     return newnode;
+    // }
+
+    // (float, float) calc_distance_and_angle(RRTNode from_node, RRTNode to_node){
+    //     float dx = from_node.x - to_node.x;
+    //     float dy = from_node.y - to_node.y;
+
+    //     float distance = Mathf.Sqrt(Mathf.Pow(dx,2) + Mathf.Pow(dy,2));
+    //     float angle = Mathf.Atan2(dy,dx);
+
+    //     return (distance, angle);
+    // }
+
+    // int get_nearest_node_index(RRTNode randomNode){
+    //     List<float> dist_arr = new List<float>();
+    //     int min_ind;
+    //     foreach(RRTNode _node in node_list){
+    //         dist_arr.Add((Mathf.Pow(_node.x-randomNode.x,2)+(Mathf.Pow(_node.y-randomNode.y,2))));
+    //     }
+    //     min_ind = dist_arr.IndexOf(dist_arr.Min());
+    //     return min_ind;
+    // }
+
+    // List<int> find_near_nodes(RRTNode new_node){
+    //     List<float> dist_arr = new List<float>();
+    //     List<int> near_inds = new List<int>();
+    //     int num_node = node_list.Count + 1;
+    //     float r = connect_circle_dist * Mathf.Sqrt((Mathf.Log(num_node) / num_node));
+
+    //     r = Mathf.Min(r, expand_dis);
+        
+    //     foreach(RRTNode _node in node_list){
+    //         dist_arr.Add((Mathf.Pow(_node.x-new_node.x,2)+(Mathf.Pow(_node.y-new_node.y,2))));
+    //     }
+
+    //     foreach(float dist in dist_arr){
+    //         if(dist <= Mathf.Pow(r,2)){
+    //             near_inds.Add(dist_arr.IndexOf(dist));
+    //         }
+    //     }
+    //     return near_inds;
+    // }
+
+
+    // RRTNode get_random_node(RRTNode _goalpos){
+    //     RRTNode randomNode;
+    //     if(UnityEngine.Random.Range(0,100) > goal_sample_rate){
+    //         randomNode = new RRTNode(UnityEngine.Random.Range(min_rand,max_rand), UnityEngine.Random.Range(min_rand,max_rand));
+    //     }
+    //     else{
+    //         randomNode = new RRTNode(_goalpos.x, _goalpos.y);
+    //     }
+        
+    //     return randomNode;
+    // }
 
 
 }
 
-public class RRTNode{
-	public float x;
-	public float y;
-	public List<float> path_x;
-	public List<float> path_y;
-	public RRTNode parent = null;
-    public float cost = 0.0f;
+// public class RRTNode{
+// 	public float x;
+// 	public float y;
+// 	public List<float> path_x;
+// 	public List<float> path_y;
+// 	public RRTNode parent = null;
+//     public float cost = 0.0f;
 
 
-    public RRTNode(float _x, float _y) {
-        x = _x;
-        y = _y;
-	}
-}
+//     public RRTNode(float _x, float _y) {
+//         x = _x;
+//         y = _y;
+// 	}
+// }

@@ -88,8 +88,11 @@ public class GlobalPathPlanning : MonoBehaviour {
 		
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
-			if (directionNew != directionOld) { //direction이 바뀐 경우에만 waypoint에 추가
-				waypoints.Add(path[i].worldPosition);
+			// if (directionNew != directionOld) { //direction이 바뀐 경우에만 waypoint에 추가
+			// waypoints.Add(path[i].worldPosition);
+			// }
+			if (i%20 == 0) { //direction이 바뀐 경우에만 waypoint에 추가
+			waypoints.Add(path[i].worldPosition);
 			}
 			directionOld = directionNew;
 		}

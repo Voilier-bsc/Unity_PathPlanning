@@ -335,7 +335,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &101553240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,6 +352,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &101553241
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -487,7 +494,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &250777811
 Transform:
   m_ObjectHideFlags: 0
@@ -518,6 +525,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &250777813
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -598,7 +612,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &330323221
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -770,7 +784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &531465010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,6 +801,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &531465011
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -882,7 +903,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &661751998
 Transform:
   m_ObjectHideFlags: 0
@@ -913,6 +934,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &661752000
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -994,7 +1022,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &666134812
 Transform:
   m_ObjectHideFlags: 0
@@ -1025,6 +1053,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &666134814
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1200,7 +1235,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &757172097
 Transform:
   m_ObjectHideFlags: 0
@@ -1296,7 +1331,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &823410890
 Transform:
   m_ObjectHideFlags: 0
@@ -1327,6 +1362,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &823410892
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1490,7 +1532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &951323045
 Transform:
   m_ObjectHideFlags: 0
@@ -1585,7 +1627,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1227080290
 Transform:
   m_ObjectHideFlags: 0
@@ -1777,7 +1819,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1321110767
 Transform:
   m_ObjectHideFlags: 0
@@ -1808,6 +1850,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &1321110769
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1983,7 +2032,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1355093737
 Transform:
   m_ObjectHideFlags: 0
@@ -2096,6 +2145,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 2000
+  goal_sample_rate: 50
+  min_rand: 30
+  max_rand: -30
+  expand_dis: 50
+  path_resolution: 1
+  connect_circle_dist: 30
 --- !u!135 &1712182316
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2231,7 +2287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1771604703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2248,6 +2304,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &1771604704
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2342,7 +2405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1785064298
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2722,7 +2785,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1919004148
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2913,7 +2976,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1991878800
 Transform:
   m_ObjectHideFlags: 0
@@ -2944,6 +3007,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  max_iter: 0
+  goal_sample_rate: 0
+  min_rand: 0
+  max_rand: 0
+  expand_dis: 0
+  path_resolution: 0
+  connect_circle_dist: 0
 --- !u!135 &1991878802
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3024,7 +3094,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2093190699
 Transform:
   m_ObjectHideFlags: 0
@@ -3119,7 +3189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2104252403
 Transform:
   m_ObjectHideFlags: 0
