@@ -2145,13 +2145,13 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 64
-  max_iter: 2000
-  goal_sample_rate: 50
-  min_rand: 30
-  max_rand: -30
+  max_iter: 500
+  goal_sample_rate: 20
+  min_rand: -5000
+  max_rand: 5000
   expand_dis: 50
   path_resolution: 1
-  connect_circle_dist: 30
+  connect_circle_dist: 40
 --- !u!135 &1712182316
 SphereCollider:
   m_ObjectHideFlags: 0
