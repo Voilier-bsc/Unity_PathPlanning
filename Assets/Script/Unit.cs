@@ -47,14 +47,14 @@ public class Unit : MonoBehaviour {
 	public void OnPathFound(Vector3[] newPath, bool pathSuccessful) {
 		if (pathSuccessful) {
 			path = newPath;
-			targetIndex = 0;
+			targetIndex = 1;
 			StopCoroutine("FollowPath");
 			StartCoroutine("FollowPath");
 		}
 	}
 
 	IEnumerator FollowPath() {
-		Vector3 currentWaypoint = path[0];
+		Vector3 currentWaypoint = path[1];
 
 		
 		while (true) {
@@ -70,31 +70,33 @@ public class Unit : MonoBehaviour {
             
             
 			localpath = localplanning(transform.position, currentWaypoint);
-			
-            
+
+            if(targetIndex == path.Length){
+                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                if(transform.position == currentWaypoint){
+                    Debug.Log("Clear");
+                    yield break;
+                }
+                yield return null;
+                continue;
+            }
 
             if(localpath != null){
-                if(localpath.Length < 5){
-                    targetIndex ++;
-                    if (targetIndex >= path.Length){
-                        currentWaypoint = path[targetIndex-1];
-                        // while(transform.position != currentWaypoint){
-                        //     transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
-                        // }
-                        yield break;
-                    }
-                    currentWaypoint = path[targetIndex];
-                }
                 if(localpath.Length > 1){
                     transform.position = Vector3.MoveTowards(transform.position,localpath[1],speed * Time.deltaTime);
                 }
-            }
-			// transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
-            // Debug.Log("local path length : "+ localpath.Length);
-            
-            
-			yield return null;
+                
+                if(localpath.Length > 1 && localpath.Length < 5){
+                    targetIndex ++;
+                }
 
+                if(targetIndex == path.Length){
+                    yield return null;
+                    continue;
+                }
+                currentWaypoint = path[targetIndex];
+            }
+			yield return null;
 		}
 	}
 
@@ -342,7 +344,7 @@ public class Unit : MonoBehaviour {
 
         Vector3 start_pos = new Vector3(node.x, 0, node.y);
         if(Physics.CheckSphere(start_pos, 1, unwalkableMask)){
-            if(Vector3.Distance(transform.position, start_pos) < 1){
+            if(Vector3.Distance(transform.position, start_pos) <= 2){
                 return true;
             }
             return false;
