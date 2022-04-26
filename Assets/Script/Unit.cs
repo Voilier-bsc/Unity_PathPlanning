@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 public class Unit : MonoBehaviour {
 	public Transform target;
-	float speed = 1000;
+	float speed = 10;
 	Vector3[] path;
 	Vector3[] localpath;
 	int targetIndex;
@@ -18,11 +18,11 @@ public class Unit : MonoBehaviour {
 	/////////// local
 	public int max_iter = 500; //500
     public int goal_sample_rate = 20; //5
-    public int min_rand = -5000;
-    public int max_rand = 5000;
-    public float expand_dis = 30; // 3.0
-    public float path_resolution = 1; //0.5
-    public float connect_circle_dist = 20; //50.0
+    public int min_rand = -100;
+    public int max_rand = 100;
+    public float expand_dis = 2; // 3.0
+    public float path_resolution = 0.1f; //0.5
+    public float connect_circle_dist = 3; //50.0
     List<RRTNode> node_list = new List<RRTNode>();
 
 
@@ -30,9 +30,9 @@ public class Unit : MonoBehaviour {
     void Awake() {
         grid = GetComponent<AGrid>();
 		while(true){
-			rnd_init_start = new Vector3(Random.Range(-4800,4800),transform.position.y,Random.Range(-4800,4800));
-			rnd_init_target = new Vector3(Random.Range(-4800,4800),target.position.y,Random.Range(-4800,4800));
-			if((!Physics.CheckSphere(rnd_init_start, 200, unwalkableMask))&& (!Physics.CheckSphere(rnd_init_target, 200, unwalkableMask)) && (Vector3.Distance(rnd_init_start, rnd_init_target) > 1000f)){
+			rnd_init_start = new Vector3(Random.Range(-48,48),transform.position.y,Random.Range(-48,48));
+			rnd_init_target = new Vector3(Random.Range(-48,48),target.position.y,Random.Range(-48,48));
+			if((!Physics.CheckSphere(rnd_init_start, 4, unwalkableMask))&& (!Physics.CheckSphere(rnd_init_target, 4, unwalkableMask)) && (Vector3.Distance(rnd_init_start, rnd_init_target) > 10)){
 				transform.position = rnd_init_start;
 				target.position = rnd_init_target;
 				break;
@@ -58,25 +58,47 @@ public class Unit : MonoBehaviour {
 
 		
 		while (true) {
-			if (transform.position == currentWaypoint) {
-				targetIndex ++;
+			// if (transform.position == currentWaypoint) {
+			// 	targetIndex ++;
 
-				if (targetIndex >= path.Length) {
-					yield break;
-				}
-				currentWaypoint = path[targetIndex];
-			}
+			// 	if (targetIndex >= path.Length) {
+			// 		yield break;
+			// 	}
+			// 	currentWaypoint = path[targetIndex];
+			// }
 
+            
+            
 			localpath = localplanning(transform.position, currentWaypoint);
 			
-		
-			transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
+            
+
+            if(localpath != null){
+                if(localpath.Length < 5){
+                    targetIndex ++;
+                    if (targetIndex >= path.Length){
+                        currentWaypoint = path[targetIndex-1];
+                        // while(transform.position != currentWaypoint){
+                        //     transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
+                        // }
+                        yield break;
+                    }
+                    currentWaypoint = path[targetIndex];
+                }
+                if(localpath.Length > 1){
+                    transform.position = Vector3.MoveTowards(transform.position,localpath[1],speed * Time.deltaTime);
+                }
+            }
+			// transform.position = Vector3.MoveTowards(transform.position,currentWaypoint,speed * Time.deltaTime);
+            // Debug.Log("local path length : "+ localpath.Length);
+            
+            
 			yield return null;
 
 		}
 	}
 
-	Vector3 cube_range = new Vector3(100,100,100);
+	Vector3 cube_range = new Vector3(1,1,1);
 	public void OnDrawGizmos() {
 		if (path != null) {
 			for (int i = targetIndex; i < path.Length; i ++) {
@@ -95,9 +117,9 @@ public class Unit : MonoBehaviour {
 
         if(localpath!=null){
                 foreach(Vector3 path in localpath){
-                draw_vect = new Vector3(path.x, 50, path.z);
+                draw_vect = new Vector3(path.x, 1, path.z);
                 Gizmos.color = Color.red;
-                Gizmos.DrawCube(draw_vect, cube_range);
+                // Gizmos.DrawCube(draw_vect, cube_range);
             }
         }
 	}
@@ -128,7 +150,7 @@ public class Unit : MonoBehaviour {
         RRTNode nearest_node;
         int last_index;
         Vector3[] local_path = new Vector3[0];
-
+    
         for(int i = 0; i < max_iter; i++){
             rnd_node = get_random_node(end_node);
             nearest_ind = get_nearest_node_index(rnd_node);
@@ -165,6 +187,8 @@ public class Unit : MonoBehaviour {
                 local_path = generate_final_course(last_index, end_node);
                 return local_path;
             }
+
+        Debug.Log("null");
 
         return null;
     }
@@ -317,7 +341,10 @@ public class Unit : MonoBehaviour {
         }
 
         Vector3 start_pos = new Vector3(node.x, 0, node.y);
-        if(Physics.CheckSphere(start_pos, 0.01f, unwalkableMask)){
+        if(Physics.CheckSphere(start_pos, 1, unwalkableMask)){
+            if(Vector3.Distance(transform.position, start_pos) < 1){
+                return true;
+            }
             return false;
         }
 

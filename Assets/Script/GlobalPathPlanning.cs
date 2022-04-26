@@ -86,19 +86,20 @@ public class GlobalPathPlanning : MonoBehaviour {
 		List<Vector3> waypoints = new List<Vector3>();
 		Vector2 directionOld = Vector2.zero;
 
-
+		waypoints.Add(path[0].worldPosition);
 		for (int i = 1; i < path.Count; i ++) {
 			Vector2 directionNew = new Vector2(path[i-1].gridX - path[i].gridX,path[i-1].gridY - path[i].gridY);
 			// if (directionNew != directionOld) { //direction이 바뀐 경우에만 waypoint에 추가
 			// waypoints.Add(path[i].worldPosition);
 			// }
-			if (i%30 == 0 || (i == (path.Count-1)) ) {
+			
+			if (i%20 == 0) {
 				waypoints.Add(path[i].worldPosition);
 			}
 
 			directionOld = directionNew;
 		}
-		waypoints.Add(path[path.Count-1].worldPosition);
+		
 		return waypoints.ToArray();
 	}
 	
