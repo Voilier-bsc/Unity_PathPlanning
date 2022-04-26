@@ -74,6 +74,7 @@ public class Unit : MonoBehaviour {
             if(targetIndex == path.Length){
                 transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
                 if(transform.position == currentWaypoint){
+                    this.gameObject.layer = 0;
                     Debug.Log("Clear");
                     yield break;
                 }
