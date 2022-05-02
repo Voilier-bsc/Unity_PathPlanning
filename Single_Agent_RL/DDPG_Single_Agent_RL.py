@@ -60,7 +60,7 @@ env_name = "Single_Agent_RL"
 # 모델 저장 및 불러오기 경로
 date_time = datetime.datetime.now().strftime("%Y_%m%d_%H%M_%S")
 save_path = f"./saved_models/DDPG/{date_time}"
-load_path = f"./saved_models/DDPG/2022_0502_1435_45"
+load_path = f"./saved_models/DDPG/2022_0502_1932_42"
 
 
 # 연산 장치

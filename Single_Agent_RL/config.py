@@ -1,9 +1,12 @@
+from sqlalchemy import false
+
+
 class configs:
     def __init__(self):
         #파라미터 값 세팅
 
         self.gpu_num = 0
-        self.no_graphics = True
+        self.no_graphics = False
         self.worker_id = 1
 
         self.visual_state_size = [3, 32, 32]
@@ -11,8 +14,8 @@ class configs:
         self.action_size = 2
 
 
-        self.load_model = False
-        self.train_mode = True
+        self.load_model = True
+        self.train_mode = False
 
         self.batch_size = 8
         self.mem_maxlen = 50000  #replay memory 크기
