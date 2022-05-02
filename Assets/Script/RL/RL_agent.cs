@@ -33,7 +33,7 @@ public class RL_agent : Agent
     float Dist;
     float preDist;
 
-    float Dist_reward_p = 10;
+    float Dist_reward_p = 1;
 
     int targetIndex;
     
@@ -104,12 +104,12 @@ public class RL_agent : Agent
         }
         // 지역을 벗어난 경우
         else if(transform.position.x > maxArea || transform.position.x < minArea || transform.position.z > maxArea || transform.position.z < minArea){
-            SetReward(-5f);
+            SetReward(-30f);
             EndEpisode();
         }
         // 충돌이 일어난 경우
         else if(Ray_Dist.Min() <= robot_radius){
-            SetReward(-5f);
+            SetReward(-30f);
             EndEpisode();
         }
         else{
