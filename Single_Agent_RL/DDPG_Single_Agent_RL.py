@@ -9,42 +9,49 @@ from collections import deque
 from mlagents_envs.environment import UnityEnvironment, ActionTuple
 from mlagents_envs.side_channel.engine_configuration_channel\
                              import EngineConfigurationChannel
+import config
 
-
-
+config = config.configs()
 
 #파라미터 값 세팅 
-visual_state_size = [3, 256, 256]
-vector_state_size = 7 #agent position, target position, relative distance
-action_size = 2
+
+gpu_num           = config.gpu_num
+no_graphics       = config.no_graphics
+worker_id         = config.worker_id
+
+visual_state_size = config.visual_state_size
+vector_state_size = config.vector_state_size
+action_size       = config.action_size
 
 
-load_model = False
-train_mode = True
+load_model        = config.load_model
+train_mode        = config.train_mode
 
-batch_size = 128
-mem_maxlen = 50000  #replay memory 크기
+batch_size        = config.batch_size 
+mem_maxlen        = config.mem_maxlen
 
-discount_factor = 0.9
-actor_lr = 1e-4
-critic_lr = 5e-4
-tau = 1e-3          #soft target update를 위한 파라미터
+discount_factor   = config.discount_factor
+actor_lr          = config.actor_lr
+critic_lr         = config.critic_lr
+tau               = config.tau 
 
 
 # OU noise paremeters
-mu = 0              # 회귀할 평균의 값
-theta = 1e-3        # 얼마나 평균으로 빨리 회귀할 지 결정하는 값
-sigma = 2e-3        # 랜덤 프로세스의 변동성
+mu                = config.mu
+theta             = config.theta
+sigma             = config.sigma
 
-run_step = 50000 if train_mode else 0
-test_step = 10000
-train_start_step = 5000
+run_step          = config.run_step
+test_step         = config.test_step
+train_start_step  = config.train_start_step
 
-print_interval = 10
-save_interval = 100
+print_interval    = config.print_interval
+save_interval     = config.save_interval
 
-VISUAL_OBS = 0
-VECTOR_OBS = 1
+VISUAL_OBS        = config.VISUAL_OBS
+VECTOR_OBS        = config.VECTOR_OBS
+
+
 
 # 유니티 환경 경로 설정
 game = "Single_Agent_RL"
@@ -52,12 +59,12 @@ env_name = "Single_Agent_RL"
 
 # 모델 저장 및 불러오기 경로
 date_time = datetime.datetime.now().strftime("%Y_%m%d_%H%M_%S")
-save_path = f"./saved_models/A2C/{date_time}"
-load_path = f"./saved_models/A2C/2022_0316_1022_03"
+save_path = f"./saved_models/DDPG/{date_time}"
+load_path = f"./saved_models/DDPG/2022_0502_1435_45"
 
 
 # 연산 장치
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:{}".format(gpu_num) if torch.cuda.is_available() else "cpu")
 
 # OU_noise class -> ou noise정의 및 파라미터 결정
 class OU_noise:
@@ -78,8 +85,8 @@ class Actor(torch.nn.Module):
         super(Actor, self).__init__()
 
         ## visual obs
-        self.conv1 = torch.nn.Conv2d(in_channels=visual_state_size[0], out_channels=32, kernel_size=8, stride=4)
-        dim1 = ((visual_state_size[1] - 8)//4 + 1, (visual_state_size[2] - 8)//4 + 1)
+        self.conv1 = torch.nn.Conv2d(in_channels=visual_state_size[0], out_channels=32, kernel_size=4, stride=4)
+        dim1 = ((visual_state_size[1] - 4)//4 + 1, (visual_state_size[2] - 4)//4 + 1)
         self.conv2 = torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2)
         dim2 = ((dim1[0] - 4)//2 + 1, (dim1[1] - 4)//2 + 1)
         self.conv3 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)
@@ -119,15 +126,15 @@ class Actor(torch.nn.Module):
 
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        return F.tanh(self.mu(x))
+        return torch.tanh(self.mu(x))
             
 class Critic(torch.nn.Module):
     def __init__(self):
         super(Critic, self).__init__()
 
         ## visual obs
-        self.conv1 = torch.nn.Conv2d(in_channels=visual_state_size[0], out_channels=32, kernel_size=8, stride=4)
-        dim1 = ((visual_state_size[1] - 8)//4 + 1, (visual_state_size[2] - 8)//4 + 1)
+        self.conv1 = torch.nn.Conv2d(in_channels=visual_state_size[0], out_channels=32, kernel_size=4, stride=4)
+        dim1 = ((visual_state_size[1] - 4)//4 + 1, (visual_state_size[2] - 4)//4 + 1)
         self.conv2 = torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2)
         dim2 = ((dim1[0] - 4)//2 + 1, (dim1[1] - 4)//2 + 1)
         self.conv3 = torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)
@@ -255,75 +262,77 @@ class DDPGAgent():
         self.writer.add_scalar("model/actor_loss", actor_loss, step)
         self.writer.add_scalar("model/critic_loss", critic_loss, step)
 
-engine_configuration_channel = EngineConfigurationChannel()
-env = UnityEnvironment(file_name=env_name, side_channels=[engine_configuration_channel])
-env.reset()
 
-# 유니티 브레인 설정
-behavior_name = list(env.behavior_specs.keys())[0]
-spec = env.behavior_specs[behavior_name]
-engine_configuration_channel.set_configuration_parameters(time_scale=12.0)
-dec, term = env.get_steps(behavior_name)
-
-# DDPGAgent 클래스를 agent로 정의
-agent = DDPGAgent()
-
-actor_losses, critic_losses, scores, episode, score = [], [], [], 0, 0
-
-for step in range(run_step + test_step):
-    if step == run_step:
-        if train_mode:
-            agent.save_model()
-        print("TEST START")
-        train_mode = False
-        engine_configuration_channel.set_configuration_parameters(time_scale=1.0)
-
-    visual_state = dec.obs[VISUAL_OBS]
-    vector_state = dec.obs[VECTOR_OBS]
+if __name__ == '__main__':
+    engine_configuration_channel = EngineConfigurationChannel()
+    env = UnityEnvironment(file_name=env_name, side_channels=[engine_configuration_channel], no_graphics = no_graphics, worker_id = worker_id)
+    env.reset()
     
-    action = agent.get_action(visual_state, vector_state, train_mode)
-    action_tuple = ActionTuple()
-    action_tuple.add_continuous(action)
-    env.set_actions(behavior_name, action_tuple)
-    env.step()
 
+    # 유니티 브레인 설정
+    behavior_name = list(env.behavior_specs.keys())[0]
+    spec = env.behavior_specs[behavior_name]
+    engine_configuration_channel.set_configuration_parameters(time_scale=3.0)
     dec, term = env.get_steps(behavior_name)
-    done = len(term.agent_id) > 0
-    reward = term.reward if done else dec.reward
-    next_visual_state = term.obs[0] if done else dec.obs[VISUAL_OBS]
-    next_vector_state = term.obs[0] if done else dec.obs[VECTOR_OBS]
-    score += reward[0]
 
-    if train_mode:
-        agent.append_sample(visual_state[0], vector_state[0], action[0], reward, next_visual_state[0], next_vector_state[0], [done])
+    # DDPGAgent 클래스를 agent로 정의
+    agent = DDPGAgent()
+
+    actor_losses, critic_losses, scores, episode, score = [], [], [], 0, 0
+
+    for step in range(run_step + test_step):
+        if step == run_step:
+            if train_mode:
+                agent.save_model()
+            train_mode = False
+            engine_configuration_channel.set_configuration_parameters(time_scale=1.0)
+
+        visual_state = dec.obs[VISUAL_OBS]
+        vector_state = dec.obs[VECTOR_OBS]
         
-    if train_mode and step > max(batch_size, train_start_step):
-        # train 수행
-        actor_loss, critic_loss = agent.train_model()
-        actor_losses.append(actor_loss)
-        critic_losses.append(critic_loss)
+        action = agent.get_action(visual_state, vector_state, train_mode)
+        action_tuple = ActionTuple()
+        action_tuple.add_continuous(action)
+        env.set_actions(behavior_name, action_tuple)
+        env.step()
+        
+        dec, term = env.get_steps(behavior_name)
+        done = len(term.agent_id) > 0
+        reward = term.reward if done else dec.reward
+        next_visual_state = term.obs[VISUAL_OBS] if done else dec.obs[VISUAL_OBS]
+        next_vector_state = term.obs[VECTOR_OBS] if done else dec.obs[VECTOR_OBS]
+        score += reward[0]
 
-        # target network soft update
-        agent.soft_update_target()
+        if train_mode:
+            agent.append_sample(visual_state[0], vector_state[0], action[0], reward, next_visual_state[0], next_vector_state[0], [done])
+            
+        if train_mode and step > max(batch_size, train_start_step):
+            # train 수행
+            actor_loss, critic_loss = agent.train_model()
+            actor_losses.append(actor_loss)
+            critic_losses.append(critic_loss)
 
-    if done:
-        episode += 1
-        scores.append(score)
-        score = 0
+            # target network soft update
+            agent.soft_update_target()
 
-        ## tensorboard
-        if episode % print_interval == 0:
-            mean_score = np.mean(scores)
-            mean_actor_loss = np.mean(actor_losses)
-            mean_critic_loss = np.mean(critic_losses)
-            agent.write_summray(mean_score, mean_actor_loss, mean_critic_loss, step)
-            actor_losses, critic_losses, scores = [], [], []
+        if done:
+            episode += 1
+            scores.append(score)
+            score = 0
 
-            print(f"{episode} Episode / Step: {step} / Score: {mean_score:.2f} / " +\
-                    f"Actor loss: {mean_actor_loss:.2f} / Critic loss: {mean_critic_loss:.4f}")
+            ## tensorboard
+            if episode % print_interval == 0:
+                mean_score = np.mean(scores)
+                mean_actor_loss = np.mean(actor_losses)
+                mean_critic_loss = np.mean(critic_losses)
+                agent.write_summray(mean_score, mean_actor_loss, mean_critic_loss, step)
+                actor_losses, critic_losses, scores = [], [], []
 
-        # 네트워크 모델 저장
-        if train_mode and episode % save_interval == 0:
-            agent.save_model()
+                print(f"{episode} Episode / Step: {step} / Score: {mean_score:.2f} / " +\
+                        f"Actor loss: {mean_actor_loss:.2f} / Critic loss: {mean_critic_loss:.4f}")
 
-env.close()
+            # 네트워크 모델 저장
+            if train_mode and episode % save_interval == 0:
+                agent.save_model()
+
+    env.close()
