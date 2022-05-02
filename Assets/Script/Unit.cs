@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+
 public class Unit : MonoBehaviour {
 	public Transform target;
 	float speed = 10;
@@ -12,8 +13,10 @@ public class Unit : MonoBehaviour {
     private Vector3 rnd_init_start;
     private Vector3 rnd_init_target;
     AGrid grid;
-
+    public float robot_r = 1;
 	Vector3 draw_vect = new Vector3(0f,0f,0f);
+
+
 
 	/////////// local
 	public int max_iter = 500; //500
@@ -55,6 +58,7 @@ public class Unit : MonoBehaviour {
 
 	IEnumerator FollowPath() {
 		Vector3 currentWaypoint = path[1];
+        Vector3 prev_local_path = new Vector3(0,0,0);
 
 		
 		while (true) {
@@ -67,7 +71,9 @@ public class Unit : MonoBehaviour {
 			// 	currentWaypoint = path[targetIndex];
 			// }
 
-            
+            if(Physics.CheckSphere(transform.position, robot_r + 0.1f, unwalkableMask)){
+                Debug.Log("collision!");
+            }
             
 			localpath = localplanning(transform.position, currentWaypoint);
 
@@ -85,6 +91,7 @@ public class Unit : MonoBehaviour {
             if(localpath != null){
                 if(localpath.Length > 1){
                     transform.position = Vector3.MoveTowards(transform.position,localpath[1],speed * Time.deltaTime);
+                    prev_local_path = localpath[1];
                 }
                 
                 if(localpath.Length > 1 && localpath.Length < 5){
@@ -137,7 +144,7 @@ public class Unit : MonoBehaviour {
 			return null;
 		}
 
-		Debug.Log("try");
+		// Debug.Log("try");
 
 
         node_list.Clear();
@@ -183,7 +190,7 @@ public class Unit : MonoBehaviour {
             }
         }
 
-        Debug.Log("reached max iteration");
+        // Debug.Log("reached max iteration");
 
         last_index = search_best_goal_node(end_node);
             if(last_index != -1){
@@ -191,7 +198,7 @@ public class Unit : MonoBehaviour {
                 return local_path;
             }
 
-        Debug.Log("null");
+        // Debug.Log("null");
 
         return null;
     }
@@ -344,8 +351,8 @@ public class Unit : MonoBehaviour {
         }
 
         Vector3 start_pos = new Vector3(node.x, 0, node.y);
-        if(Physics.CheckSphere(start_pos, 1, unwalkableMask)){
-            if(Vector3.Distance(transform.position, start_pos) <= 2){
+        if(Physics.CheckSphere(start_pos, robot_r, unwalkableMask)){
+            if(Vector3.Distance(transform.position, start_pos) <= robot_r*2){
                 return true;
             }
             return false;
