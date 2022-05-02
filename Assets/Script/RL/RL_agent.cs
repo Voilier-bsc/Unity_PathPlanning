@@ -60,8 +60,10 @@ public class RL_agent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(targetTrans.position);
+        sensor.AddObservation(transform.position.x);
+        sensor.AddObservation(transform.position.z);
+        sensor.AddObservation(targetTrans.position.x);
+        sensor.AddObservation(targetTrans.position.z);
         sensor.AddObservation(Vector3.Distance(targetTrans.position, transform.position));
     }
 
@@ -97,17 +99,17 @@ public class RL_agent : Agent
 
         // target에 도착한 경우
         if(Dist <= 3.5f){
-            SetReward(1f);
+            SetReward(30f);
             EndEpisode();
         }
         // 지역을 벗어난 경우
         else if(transform.position.x > maxArea || transform.position.x < minArea || transform.position.z > maxArea || transform.position.z < minArea){
-            SetReward(-1f);
+            SetReward(-5f);
             EndEpisode();
         }
         // 충돌이 일어난 경우
         else if(Ray_Dist.Min() <= robot_radius){
-            SetReward(-1f);
+            SetReward(-5f);
             EndEpisode();
         }
         else{
