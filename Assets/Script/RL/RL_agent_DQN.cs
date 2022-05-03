@@ -33,7 +33,7 @@ public class RL_agent_DQN : Agent
     float Dist;
     float preDist;
 
-    float Dist_reward_p = 1;
+    float Dist_reward_p = 10;
 
     int targetIndex;
 

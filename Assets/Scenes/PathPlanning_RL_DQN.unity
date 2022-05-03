@@ -977,7 +977,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 700
   targetTrans: {fileID: 1954052952}
   unwalkable:
     serializedVersion: 2
