@@ -699,7 +699,7 @@ Camera:
   far clip plane: 100
   field of view: 50
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -977,7 +977,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  MaxStep: 5000
   targetTrans: {fileID: 1954052952}
   unwalkable:
     serializedVersion: 2

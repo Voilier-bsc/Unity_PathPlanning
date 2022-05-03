@@ -87,7 +87,7 @@ public class RL_agent_DQN : Agent
 
     public override void OnActionReceived(ActionBuffers actionsBuffers)
     {
-        AddReward(-0.01f);
+        AddReward(-0.1f);
 
         var actions = actionsBuffers.DiscreteActions[0];
         
