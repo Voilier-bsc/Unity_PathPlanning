@@ -5,7 +5,6 @@ using UnityEngine;
 public class agent_test : MonoBehaviour
 {
 	public Transform target;
-	float speed = 10;
 	Vector3[] path;
 	Vector3[] localpath;
 	int targetIndex;

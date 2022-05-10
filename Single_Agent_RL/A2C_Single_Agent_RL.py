@@ -68,7 +68,7 @@ env_name = "Single_Agent_RL_DQN"
 # 모델 저장 및 불러오기 경로
 date_time = datetime.datetime.now().strftime("%Y_%m%d_%H%M_%S")
 save_path = f"./saved_models/A2C/{date_time}"
-load_path = f"./saved_models/A2C/2022_0503_1113_20"
+load_path = f"./saved_models/A2C/2022_0503_1333_35"
 
 
 # 연산 장치

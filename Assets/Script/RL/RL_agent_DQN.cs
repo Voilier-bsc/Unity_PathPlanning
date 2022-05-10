@@ -33,9 +33,10 @@ public class RL_agent_DQN : Agent
     float Dist;
     float preDist;
 
-    float Dist_reward_p = 10;
+    float Dist_reward_p = 5;
 
     int targetIndex;
+    Vector3 currentWaypoint;
 
     private Vector3 moveRight = new Vector3(1f,0,0f);
     private Vector3 moveLeft = new Vector3(-1f,0,0f);
@@ -88,7 +89,19 @@ public class RL_agent_DQN : Agent
     public override void OnActionReceived(ActionBuffers actionsBuffers)
     {
         AddReward(-0.1f);
+        if (globalpath != null){
+            if(targetIndex >= globalpath.Length){
+                currentWaypoint = globalpath[globalpath.Length-1];
+            }
+            else{
+                currentWaypoint = globalpath[targetIndex];
+            }
+        }
 
+        if (Vector3.Distance(currentWaypoint, transform.position) <= 2){
+            targetIndex ++;
+        }
+        
         var actions = actionsBuffers.DiscreteActions[0];
         
         switch (actions)
@@ -143,19 +156,26 @@ public class RL_agent_DQN : Agent
 
         Dist = Vector3.Distance(targetTrans.position, transform.position);
 
+        
+       
+        // Debug.Log(StepCount);
         // target에 도착한 경우
         if(Dist <= 3.5f){
-            SetReward(30f);
+            SetReward(10f);
             EndEpisode();
         }
         // 지역을 벗어난 경우
         else if(transform.position.x > maxArea || transform.position.x < minArea || transform.position.z > maxArea || transform.position.z < minArea){
-            SetReward(-30f);
+            SetReward(-10f);
             EndEpisode();
         }
         // 충돌이 일어난 경우
         else if(Ray_Dist.Min() <= robot_radius){
-            SetReward(-30f);
+            SetReward(-10f);
+            EndEpisode();
+        }
+        else if (MaxStep <= StepCount){
+            SetReward(-10f);
             EndEpisode();
         }
         else{
@@ -164,6 +184,7 @@ public class RL_agent_DQN : Agent
             preDist = Dist;
             // Debug.Log(dist_reward/Dist_reward_p);
         }
+        // Debug.Log(GetCumulativeReward());
 
         // target에 가까워지는 경우
         
@@ -194,11 +215,14 @@ public class RL_agent_DQN : Agent
 				break;
 			}
 		}
-
+        
         preDist = Vector3.Distance(targetTrans.position, transform.position);
 
         GlobalPathRequestManager.RequestPath(transform.position,targetTrans.position, OnPathFound);
-
+        if (globalpath != null){
+            currentWaypoint = globalpath[0];
+        }
+        
     }
 
 
@@ -251,7 +275,22 @@ public class RL_agent_DQN : Agent
         }
     }
 
+    // public void OnDrawGizmos() {
+	// 	if (globalpath != null) {
+	// 		for (int i = targetIndex; i < globalpath.Length; i ++) {
+	// 			Gizmos.color = Color.black;
+	// 			Gizmos.DrawCube(globalpath[i], Vector3.one);
 
+
+	// 			// if (i == targetIndex) {
+	// 			// 	Gizmos.DrawLine(transform.position, globalpath[i]);
+	// 			// }
+	// 			// else {
+	// 			Gizmos.DrawLine(globalpath[i-1],globalpath[i]);
+	// 			// }
+	// 		}
+	// 	}
+	// }
 
 }
 

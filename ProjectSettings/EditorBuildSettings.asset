@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PathPlanning_RL_DQN.unity
-    guid: edec521ab477ac7d1b3ac7576acbad50
+    path: Assets/Scenes/PathPlanning_RL_Global.unity
+    guid: b950564c29deefa5ca5ce117dfb167b6
   m_configObjects: {}

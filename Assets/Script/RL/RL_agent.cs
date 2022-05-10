@@ -35,7 +35,7 @@ public class RL_agent : Agent
 
     float Dist_reward_p = 1;
 
-    int targetIndex;
+    // int targetIndex = 0;
     
 
 
@@ -160,7 +160,7 @@ public class RL_agent : Agent
         Debug.Log(pathSuccessful);
 		if (pathSuccessful) {
 			globalpath = newPath;
-			targetIndex = 1;
+			// targetIndex = 1;
 		}
 	}
 
