@@ -10,11 +10,13 @@ public class AGrid : MonoBehaviour {
 	public float nodeRadius;
 	public float robotRadius;
 	Node[,] grid;
-
+	
 	float nodeDiameter;
 	int gridSizeX, gridSizeY;
+	Vector3 area_pos;
 
 	void Awake() {
+		area_pos = gameObject.transform.parent.parent.gameObject.transform.position;
 		nodeDiameter = nodeRadius*2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
@@ -29,7 +31,7 @@ public class AGrid : MonoBehaviour {
 
 	void CreateGrid() {
 		grid = new Node[gridSizeX,gridSizeY];
-		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
+		Vector3 worldBottomLeft = area_pos + new Vector3(0f,0f,0f) - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
 
 		for (int x = 0; x < gridSizeX; x ++) {
 			for (int y = 0; y < gridSizeY; y ++) {
@@ -73,7 +75,7 @@ public class AGrid : MonoBehaviour {
 	}
 	
 	void OnDrawGizmos() {
-		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
+		Gizmos.DrawWireCube(new Vector3(0f,0f,0f),new Vector3(gridWorldSize.x,1,gridWorldSize.y));
 		if (grid != null && displayGridGizmos) {
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable)?Color.white:Color.red;

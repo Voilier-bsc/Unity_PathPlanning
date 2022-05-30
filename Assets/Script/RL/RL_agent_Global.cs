@@ -197,7 +197,7 @@ public class RL_agent_Global : Agent
         else{
             // target에 가까워지는 경우
             float dist_reward = preDist - Dist;
-            AddReward(dist_reward/Dist_reward_p);
+            // AddReward(dist_reward/Dist_reward_p);
             preDist = Dist;
         }
         // Debug.Log(GetCumulativeReward());

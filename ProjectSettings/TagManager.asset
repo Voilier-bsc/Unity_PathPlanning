@@ -14,18 +14,18 @@ TagManager:
   - Unwalkable
   - Road
   - Grass
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - robot_1
+  - robot_2
+  - robot_3
+  - robot_4
+  - way_1
+  - way_2
+  - way_3
+  - way_4
+  - target_1
+  - target_2
+  - target_3
+  - target_4
   - 
   - 
   - 
